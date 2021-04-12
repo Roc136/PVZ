@@ -139,7 +139,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Console.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Display.cpp" />
+    <ClCompile Include="Plant.cpp" />
+    <ClCompile Include="Shop.cpp" />
+    <ClCompile Include="Zombie.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="Console.h" />
+    <ClInclude Include="include.h" />
+    <ClInclude Include="Display.h" />
+    <ClInclude Include="Plant.h" />
+    <ClInclude Include="Shop.h" />
+    <ClInclude Include="Zombie.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
