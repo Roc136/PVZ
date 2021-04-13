@@ -9,10 +9,11 @@ bool Bullet::move()
 	{
 		int x = pos_x - 1;
 		int y = pos_y - 3;
+		int i = 0;
 		pos_x++;
-		Zombie* zombie = zlist.getZombie(x, y);
-		if (zombie == NULL)
-			zombie = zlist.getZombie(x + 1, y);
+		Zombie* zombie = zlist.getZombie(x - 5, y);
+		while (zombie == NULL && i < 6)
+			zombie = zlist.getZombie(x + (i++) - 5, y);
 		if (zombie == NULL)
 		{
 			status_count = 0;

@@ -5,8 +5,8 @@
 #include "config.h"
 
 int score = 0; //得分
-int level = 3; //等级（根据得分增加）
-int sunlight = 5000; // 阳光数，初始50
+int level = 1; //等级（根据得分增加）
+int sunlight = 50; // 阳光数，初始50
 int alive = 1; // 游戏是否存活
 
 PlantList plist;

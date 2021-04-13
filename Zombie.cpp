@@ -2,8 +2,8 @@
 
 static int _HP[] = { 120, 240, 360 }; // 僵尸血量
 static int _ATK[] = { 5, 5, 5 }; // 僵尸攻击力
-static int _AS[] = { 25, 25, 25 }; // 僵尸攻击速度，用等待值显示，ms
-static int _MS[] = { 25, 25, 25 }; // 僵尸移动速度，用等待值显示，ms
+static int _AS[] = { 20, 20, 20 }; // 僵尸攻击速度，用等待值显示，ms
+static int _MS[] = { 30, 30, 30 }; // 僵尸移动速度，用等待值显示，ms
 static int _ZOMBIE_SCORE[] = { 10, 15, 25 };
 static int _ZOMBIE_COLOR[] = { WHITE, DARK_YELLOW, GREY }; // 僵尸颜色
 const char* _ZOMBIE_NAME[] = { "普通僵尸", "路障僵尸", "铁桶僵尸" }; // 僵尸名字
