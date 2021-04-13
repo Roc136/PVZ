@@ -12,6 +12,8 @@ bool Bullet::move()
 		pos_x++;
 		Zombie* zombie = zlist.getZombie(x, y);
 		if (zombie == NULL)
+			zombie = zlist.getZombie(x + 1, y);
+		if (zombie == NULL)
 		{
 			status_count = 0;
 			if (pos_x >= WINDOWS_WIDTH - 1)

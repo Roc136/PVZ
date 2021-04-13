@@ -1,6 +1,6 @@
 #pragma once
 #include "config.h"
-#include <map>
+#include <vector>
 
 class Zombie
 {
@@ -38,7 +38,7 @@ public:
 class ZombieList
 {
 private:
-	std::map<Pos, Zombie*, Pos_less> zombie_list;
+	std::vector<Zombie*> zombie_list;
 	int create_count;
 	int create_time;
 public:
@@ -47,7 +47,10 @@ public:
 	void addZombie(Zombie* zombie);
 	// 遍历每个僵尸做一次 move 函数
 	void zombieOperate();
+	// 获取某一坐标的僵尸
 	Zombie* getZombie(int x, int y);
+	// 获取某一行所有僵尸
+	std::vector<Zombie*> getZombie(int r);
 };
 
 class Barricede : public Zombie
@@ -56,4 +59,14 @@ public:
 	Barricede(int x, int y);
 	void eat(Plant* plant);
 	void move();
+
+};
+
+class Buckethead : public Zombie
+{
+public:
+	Buckethead(int x, int y);
+	void eat(Plant* plant);
+	void move();
+
 };

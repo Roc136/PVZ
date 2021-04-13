@@ -5,5 +5,5 @@ void initWindow();
 void setCursorHide(bool visible);
 //设置光标位置，左上角为（0,0）
 void setCursorPos(int x, int y);
-//设置字体颜色，无实参时恢复默认，只有一个实参时设置前景色，两个参数第一个前景色，第二个背景色
+//设置字体颜色，无实参时恢复默认，只有一个实参时设置前景色，两个参数第一个前景色，第二个背景色，当背景色与前景色导致看不清时前景色设置为黑色
 void setColor(int font_color = 0xf, int background_color = 0);

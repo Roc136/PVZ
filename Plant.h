@@ -61,3 +61,30 @@ public:
 	// 攻击函数
 	void hit();
 };
+
+class DoubleShooter : public Plant
+{
+private:
+	int hit_count;
+public:
+	// 构造函数，传递行列号
+	DoubleShooter(int r, int c);
+	// 攻击函数
+	void hit();
+};
+
+class Nut : public Plant
+{
+public:
+	Nut(int r, int c);
+	void hit();
+};
+
+class Potato : public Plant
+{
+	bool is_ready;
+	int ready_count;
+public:
+	Potato(int r, int c);
+	void hit();
+};

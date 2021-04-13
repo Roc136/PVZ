@@ -18,3 +18,6 @@ void fixBullet(const Bullet& blt);
 //œ‘ æΩ© ¨
 void showZombie(const Zombie& zombie);
 void fixZombie(const Zombie& zombie);
+//œ‘ æ…ÃµÍ
+void showShop();
+void fixShop();
