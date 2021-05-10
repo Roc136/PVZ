@@ -21,3 +21,6 @@ void fixZombie(const Zombie& zombie);
 //显示商店
 void showShop();
 void fixShop();
+//爆炸效果
+void showBoom(int r, int c, int size, int color);
+void fixBoom(int r, int c, int size);

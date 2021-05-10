@@ -22,6 +22,8 @@ public:
 	bool beEaten(int atk);
 	//获取植物坐标
 	Pos getPos() const;
+	//获取植物ID
+	PLANT getID() const;
 	//获取植物存活状态
 	bool isValid() const;
 	//攻击，纯虚函数，在具体的植物类中定义
@@ -35,6 +37,7 @@ class PlantList
 {
 private:
 	std::map<Pos, Plant*, Pos_less> plant_list;
+	std::map<Pos, Plant*, Pos_less> pumpkin_list;
 public:
 	PlantList();
 	// 添加植物，sure参数表示确定覆盖旧植物
@@ -76,15 +79,59 @@ public:
 class Nut : public Plant
 {
 public:
-	Nut(int r, int c);
+	Nut(int r, int c, PLANT id = PLANT::NUT);
 	void hit();
 };
 
 class Potato : public Plant
 {
-	bool is_ready;
+	int is_ready;
 	int ready_count;
 public:
 	Potato(int r, int c);
+	void hit();
+};
+
+class IceShooter : public Plant
+{
+	int ice_time;
+public:
+	IceShooter(int r, int c);
+	void hit();
+};
+
+class HighNut : public Nut
+{
+public:
+	HighNut(int r, int c);
+};
+
+class Squash : public Plant
+{
+	int attack;
+public:
+	Squash(int r, int c);
+	void hit();
+};
+
+class Cherry : public Plant
+{
+	int attack;
+public:
+	Cherry(int r, int c);
+	void hit();
+};
+
+class Garlic : public Plant
+{
+public:
+	Garlic(int r, int c);
+	void hit();
+};
+
+class Pumpkin : public Plant
+{
+public:
+	Pumpkin(int r, int c);
 	void hit();
 };

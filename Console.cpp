@@ -12,17 +12,17 @@ void initWindow()
 	SetWindowLongPtr(hWnd, GWL_STYLE, GetWindowLong(hWnd, GWL_STYLE) & ~WS_THICKFRAME & ~WS_MAXIMIZEBOX & ~WS_MINIMIZEBOX);
 	SetWindowPos(hWnd, NULL, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, NULL);
 	//修改窗口大小
-	char cmd[] = "mode con cols=00 lines=00";
+	char cmd[] = "mode con cols=0000 lines=0000";
 	char buffer_w[64];
 	char buffer_h[64];
-	int ret = snprintf(buffer_w, sizeof buffer_w, "%d", WINDOWS_WIDTH);
+	int ret = snprintf(buffer_w, sizeof buffer_w, "%04d", WINDOWS_WIDTH);
 	if (ret < 0)
 		exit(-1);
-	ret = snprintf(buffer_h, sizeof buffer_h, "%d", WINDOWS_HIGH);
+	ret = snprintf(buffer_h, sizeof buffer_h, "%04d", WINDOWS_HIGH);
 	if (ret < 0)
 		exit(-1);
-	cmd[14] = buffer_w[0]; cmd[15] = buffer_w[1];
-	cmd[23] = buffer_h[0]; cmd[24] = buffer_h[1];
+	cmd[14] = buffer_w[0]; cmd[15] = buffer_w[1]; cmd[16] = buffer_w[2]; cmd[17] = buffer_w[3];
+	cmd[25] = buffer_h[0]; cmd[26] = buffer_h[1]; cmd[27] = buffer_h[2]; cmd[28] = buffer_h[3];
 	system(cmd);
 	//system("mode con cols=90 lines=39");
 	//隐藏光标
@@ -53,7 +53,7 @@ void setCursorPos(int x, int y)
 void setColor(int font_color, int background_color)
 {
 	if (font_color == WHITE &&
-		background_color == YELLOW || background_color == WHITE || background_color == BLUE || background_color == CYAN || background_color == font_color)
+		background_color == YELLOW || background_color == WHITE || background_color == BLUE || background_color == CYAN || background_color == DARK_WHITE || background_color == font_color)
 		font_color = BLACK;
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), background_color << 4 | font_color);
 }

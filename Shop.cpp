@@ -33,7 +33,13 @@ void PlantSelector::move(int direction)
 
 void PlantSelector::setPant(int pid)
 {
-	this->pid = pid;
+	if(pid >= 0 && pid < PLANT_KIND_NUM)
+		this->pid = pid;
+	else
+	{
+		showMessage("植物ID错误！");
+		exit(-1);
+	}
 }
 
 int PlantSelector::getPlant() const
@@ -69,16 +75,19 @@ Pos MapSelector::getPos() const
 	return pos;
 }
 
-bool Shop::buyPlant(int sure)
+int Shop::buyPlant(int sure)
 {
 	int success = 0;
 	int pid = ps.getPlant();
 	int need_sun = _COST[pid];
+	if (wait_time[pid] > 0)
+		return -1;
 	if (sunlight >= need_sun)
 	{
 		Pos pos = ms.getPos();
 		success = 1;
 		sunlight -= need_sun;
+		wait_time[pid] = _WAIT[pid];
 		switch (pid)
 		{
 		case 0:
@@ -131,15 +140,86 @@ bool Shop::buyPlant(int sure)
 			}
 			break;
 		}
+		case 5:
+		{
+			IceShooter* p = new IceShooter(pos.row, pos.col);
+			if (!plist.addPlant(p, sure))
+			{
+				success = 0;
+				status = 2;
+			}
+			break;
+		}
+		case 6:
+		{
+			HighNut* p = new HighNut(pos.row, pos.col);
+			if (!plist.addPlant(p, sure))
+			{
+				success = 0;
+				status = 2;
+			}
+			break;
+		}
+		case 7:
+		{
+			Squash* p = new Squash(pos.row, pos.col);
+			if (!plist.addPlant(p, sure))
+			{
+				success = 0;
+				status = 2;
+			}
+			break;
+		}
+		case 8:
+		{
+			Cherry* p = new Cherry(pos.row, pos.col);
+			if (!plist.addPlant(p, sure))
+			{
+				success = 0;
+				status = 2;
+			}
+			break;
+		}
+		case 9:
+		{
+			Garlic* p = new Garlic(pos.row, pos.col);
+			if (!plist.addPlant(p, sure))
+			{
+				success = 0;
+				status = 2;
+			}
+			break;
+		}
+		case 10:
+		{
+			Pumpkin* p = new Pumpkin(pos.row, pos.col);
+			if (!plist.addPlant(p, sure))
+			{
+				success = 0;
+				status = 2;
+			}
+			break;
+		}
 		default:
-			success = 0;
+			success = -2;	
 		}
 	}
 	return success;
 }
 
+Shop::Shop() :status(0) 
+{
+	wait_time = new int[PLANT_KIND_NUM]();
+}
+
 void Shop::choosePlant()
 {
+	const char* name = _PLANT_NAME[ps.getPlant()];
+	char msg[64] = "选中植物";
+	int i = 0;
+	for (i = 0; name[i] != 0; i++)
+		msg[8 + i] = name[i];
+	showMessage(msg);
 	status = 1;
 }
 
@@ -161,8 +241,16 @@ void Shop::shopOperate(int key)
 		case ENTER:
 			choosePlant();
 			break;
-		case NUM1:case NUM2:case NUM3:case NUM4:case NUM5:
+		case NUM1:case NUM2:case NUM3:case NUM4:case NUM5:case NUM6:case NUM7:case NUM8:case NUM9:
 			ps.setPant(key - NUM0 - 1);
+			choosePlant();
+			break;
+		case KB_A:case KB_B:
+			ps.setPant(key - KB_A + 9);
+			choosePlant();
+			break;
+		case KB_a:case KB_b:
+			ps.setPant(key - KB_a + 9);
 			choosePlant();
 			break;
 		default:;
@@ -176,7 +264,9 @@ void Shop::shopOperate(int key)
 			ms.move(key);
 			break;
 		case ENTER:
-			if (!buyPlant(0))
+		{
+			int success = buyPlant(0);
+			if (success == 0)
 			{
 				if (status == 2)
 				{
@@ -190,7 +280,7 @@ void Shop::shopOperate(int key)
 					fixShop();
 				}
 			}
-			else
+			else if (success == 1)
 			{
 				const char* name = _PLANT_NAME[ps.getPlant()];
 				char msg[64] = "成功种植";
@@ -201,8 +291,22 @@ void Shop::shopOperate(int key)
 				showMessage(msg);
 				unchoosePlant();
 			}
+			else if (success == -1)
+			{
+				status = 0;
+				showMessage("植物还在冷却！");
+				fixShop();
+			}
+			else if (success == -2)
+			{
+				status = 0;
+				showMessage("没有这种植物！");
+				fixShop();
+			}
 			break;
+		}
 		case ESC:
+			showMessage("取消选择");
 			unchoosePlant();
 			break;
 		default:;
@@ -231,9 +335,17 @@ void Shop::shopOperate(int key)
 			ms.move(key);
 			break;
 		case ESC:
+			showMessage("取消选择");
 			unchoosePlant();
 			break;
 		default:;
 		}
 	}
+}
+
+void Shop::wait()
+{
+	for (int i = 0; i < PLANT_KIND_NUM; i++)
+		if (wait_time[i] > 0)
+			wait_time[i]--;
 }

@@ -1,13 +1,20 @@
-#include <iostream>
 #include <windows.h>
 #include <conio.h>
+#include <time.h>
 #include "include.h"
 #include "config.h"
 
-int score = 0; //得分
-int level = 1; //等级（根据得分增加）
-int sunlight = 50; // 阳光数，初始50
-int alive = 1; // 游戏是否存活
+#ifdef DEBUG
+	int score = 2200; //得分
+	int level = 7; //等级（根据得分增加）
+	int sunlight = 5000; // 阳光数，初始50
+	int alive = 1; // 游戏是否存活
+#else
+	int score = 0; //得分
+	int level = 1; //等级（根据得分增加）
+	int sunlight = 50; // 阳光数，初始50
+	int alive = 1; // 游戏是否存活
+#endif // DEBUG
 
 PlantList plist;
 BulletList blist;
@@ -21,13 +28,19 @@ void sunlightAdd();
 
 int main()
 {
+	//while (1)
+	//{
+	//	if (_kbhit())
+	//	{
+	//		int key = _getch();
+	//		if (key == 161 || key == 163)
+	//			continue;
+	//		printf("%d ", key);
+	//	}
+	//	//printf("a");
+	//}
 	initWindow();
 	while (Game());
-	while (1)
-	{
-		int ch = _getch();
-		std::cout << ch << " ";
-	}
 	while (1);
 	return 0;
 }
@@ -35,11 +48,13 @@ int main()
 bool Game()
 {
 	int regame = 0;
+	ULONGLONG last_time = GetTickCount64();
 	showMap();
 	showMessage("欢迎来到植物大战僵尸无尽模式！");
 	while (alive)
 	{
-		Sleep(SLEEP_TIME);
+		while (GetTickCount64() - last_time < SLEEP_TIME);
+		last_time = GetTickCount64();
 		showInfo();
 		if (_kbhit())
 		{
@@ -51,6 +66,7 @@ bool Game()
 		plist.plantsOperate();
 		blist.bulletOperate();
 		zlist.zombieOperate();
+		shop.wait();
 		showShop();
 		levelOperate();
 		sunlightAdd();
@@ -79,6 +95,38 @@ void levelOperate()
 			level = 3;
 		}
 	}
+	else if (score < LEVEL_4_SCORE)
+	{
+		if (level == 3)
+		{
+			showMessage("等级提升到四级！");
+			level = 4;
+		}
+	}
+	else if (score < LEVEL_5_SCORE)
+	{
+		if (level == 4)
+		{
+			showMessage("等级提升到五级！");
+			level = 5;
+		}
+	}
+	else if (score < LEVEL_6_SCORE)
+	{
+		if (level == 5)
+		{
+			showMessage("等级提升到六级！");
+			level = 6;
+		}
+	}
+	else if (score < LEVEL_7_SCORE)
+	{
+		if (level == 6)
+		{
+			showMessage("等级提升到七级！");
+			level = 7;
+		}
+	}
 }
 
 void sunlightAdd()
@@ -93,3 +141,9 @@ void sunlightAdd()
 		sunlight_count++;
 	}
 }
+
+/*
+TODO：
+几个列表的析构函数
+添加僵尸
+*/

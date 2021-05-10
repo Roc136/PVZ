@@ -4,6 +4,7 @@
 
 //各模块共用的库
 #include <iostream>
+#include <cstdio>
 #include <iomanip>
 #include <random>
 

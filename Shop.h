@@ -1,6 +1,8 @@
 #pragma once
 #include "include.h"
 
+extern int _WAIT[]; // 商店冷却
+
 class PlantSelector
 {
 private:
@@ -28,15 +30,18 @@ private:
 	PlantSelector ps;
 	MapSelector ms;
 	int status; // 0选择植物，1选择地图位置，2购买植物冲突
-	bool buyPlant(int sure);
+	int* wait_time;
+	int buyPlant(int sure);
 public:
-	Shop() :status(0) {}
+	Shop();
 	// 选定植物
 	void choosePlant();
 	// 取消选定植物
 	void unchoosePlant();
 	// 进行操作
 	void shopOperate(int key);
+	// 冷却
+	void wait();
 	//显示商店信息
 	friend void showShop();
 	friend void fixShop();
