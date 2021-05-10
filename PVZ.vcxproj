@@ -143,6 +143,7 @@
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Display.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Plant.cpp" />
     <ClCompile Include="Shop.cpp" />
     <ClCompile Include="Zombie.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="Console.h" />
     <ClInclude Include="include.h" />
     <ClInclude Include="Display.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="Plant.h" />
     <ClInclude Include="Shop.h" />
     <ClInclude Include="Zombie.h" />

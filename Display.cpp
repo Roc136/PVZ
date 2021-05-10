@@ -7,6 +7,7 @@ using namespace std;
 extern const char* _PLANT_NAME[]; // 植物名字
 extern const char* _ZOMBIE_NAME[]; // 僵尸名字
 extern int _COST[];
+extern const char* _MENU_NAME[];
 
 void showMap()
 {
@@ -497,4 +498,147 @@ void fixBoom(int r, int c, int size)
 					for (int k = 0; k < COL_WIDTH; k++)
 						printf(" ");
 				}
+}
+
+void showFrame()
+{
+	setColor(BLUE);
+	setCursorPos((WINDOWS_WIDTH - FRAME_WIDTH) / 2, (WINDOWS_HIGH - FRAME_HIGH) / 2);
+	printf("#");
+	for (int i = 0; i < FRAME_WIDTH - 2; i++)
+		printf("=");
+	printf("#");
+	for (int i = 0; i < FRAME_HIGH - 1; i++)
+	{
+		setCursorPos((WINDOWS_WIDTH - FRAME_WIDTH) / 2, (WINDOWS_HIGH - FRAME_HIGH) / 2 + i + 1);
+		printf(">");
+		for (int j = 0; j < FRAME_WIDTH - 2; j++)
+			printf(" ");
+		printf(">");
+	}
+	setCursorPos((WINDOWS_WIDTH - FRAME_WIDTH) / 2, (WINDOWS_HIGH - FRAME_HIGH) / 2 + FRAME_HIGH);
+	printf("#");
+	for (int i = 0; i < FRAME_WIDTH - 2; i++)
+		printf("=");
+	printf("#");
+	setColor();
+}
+
+void fixFrame()
+{
+	setColor();
+	setCursorPos((WINDOWS_WIDTH - FRAME_WIDTH) / 2, (WINDOWS_HIGH - FRAME_HIGH) / 2);
+	printf(" ");
+	for (int i = 0; i < FRAME_WIDTH - 2; i++)
+		printf(" ");
+	printf(" ");
+	for (int i = 0; i < FRAME_HIGH - 1; i++)
+	{
+		setCursorPos((WINDOWS_WIDTH - FRAME_WIDTH) / 2, (WINDOWS_HIGH - FRAME_HIGH) / 2 + i + 1);
+		for (int j = 0; j < FRAME_WIDTH; j++)
+			printf(" ");
+	}
+	setCursorPos((WINDOWS_WIDTH - FRAME_WIDTH) / 2, (WINDOWS_HIGH - FRAME_HIGH) / 2 + FRAME_HIGH);
+	printf(" ");
+	for (int i = 0; i < FRAME_WIDTH - 2; i++)
+		printf(" ");
+	printf(" ");
+	setColor();
+}
+
+void showImg()
+{
+	setCursorPos(0, (WINDOWS_HIGH - 22) / 2);
+	setColor(GREEN);
+	printf("\
+        $$$$$$$\\  $$\\        $$$$$$\\  $$\\   $$\\ $$$$$$$$\\  $$$$$$\\       \n\
+        $$  __$$\\ $$ |      $$  __$$\\ $$$\\  $$ |\\__$$  __|$$  __$$\\      \n\
+        $$ |  $$ |$$ |      $$ /  $$ |$$$$\\ $$ |   $$ |   $$ /  \\__|     \n\
+        $$$$$$$  |$$ |      $$$$$$$$ |$$ $$\\$$ |   $$ |   \\$$$$$$\\       \n\
+        $$  ____/ $$ |      $$  __$$ |$$ \\$$$$ |   $$ |    \\____$$\\      \n\
+        $$ |      $$ |      $$ |  $$ |$$ |\\$$$ |   $$ |   $$\\   $$ |     \n\
+        $$ |      $$$$$$$$\\ $$ |  $$ |$$ | \\$$ |   $$ |   \\$$$$$$  |     \n\
+        \\__|      \\_______$$\\__| $$\\_|$$$$$$\\__|   \\__|    \\______/      \n\
+                          $$ |   $$ |$$  __$$\\                           \n\
+                          $$ |   $$ |$$ /  \\__|                          \n\
+                          \\$$\\  $$  |\\$$$$$$\\                            \n\
+                           \\$$\\$$  /  \\____$$\\                           \n\
+                            \\$$$  /  $$\\   $$ |                          \n\
+                             \\$  /   \\$$$$$$  |                          \n\
+  $$$$$$$$\\  $$$$$$\\  $$\\     \\$$\\ $$$$$$$\\__$$$$$$\\ $$$$$$$$\\  $$$$$$\\  \n\
+  \\____$$  |$$  __$$\\ $$$\\    $$$ |$$  __$$\\ \\_$$  _|$$  _____|$$  __$$\\ \n\
+      $$  / $$ /  $$ |$$$$\\  $$$$ |$$ |  $$ |  $$ |  $$ |      $$ /  \\__|\n\
+     $$  /  $$ |  $$ |$$\\$$\\$$ $$ |$$$$$$$\\ |  $$ |  $$$$$\\    \\$$$$$$\\  \n\
+    $$  /   $$ |  $$ |$$ \\$$$  $$ |$$  __$$\\   $$ |  $$  __|    \\____$$\\ \n\
+   $$  /    $$ |  $$ |$$ |\\$  /$$ |$$ |  $$ |  $$ |  $$ |      $$\\   $$ |\n\
+  $$$$$$$$\\  $$$$$$  |$$ | \\_/ $$ |$$$$$$$  |$$$$$$\\ $$$$$$$$\\ \\$$$$$$  |\n\
+  \\________| \\______/ \\__|     \\__|\\_______/ \\______|\\________| \\______/ ");
+	setColor();
+}
+
+void showMenu()
+{
+	fixFrame();
+	showImg();
+	int menu_left = WINDOWS_WIDTH / 2 + 30;
+	int menu_top = WINDOWS_HIGH / 2 - Menu::lines - 1;
+	setColor(GREY);
+	setCursorPos(menu_left - 2, menu_top - 2);
+	printf("#");
+	for (int i = 0; i < 16; i++)
+		printf("=");
+	printf("#");
+	for (int i = 0; i < 2 * Menu::lines + 2; i++)
+	{
+		setCursorPos(menu_left - 2, menu_top + i - 1);
+		printf(">");
+		setCursorPos(menu_left + 15, menu_top + i - 1);
+		printf(">");
+	}
+	setCursorPos(menu_left - 2, menu_top + 2 * Menu::lines);
+	printf("#");
+	for (int i = 0; i < 16; i++)
+		printf("=");
+	printf("#");
+	for (int i = 0; i < Menu::lines; i++)
+	{
+		int color = Menu::selector == i ? YELLOW : WHITE;
+		setColor(BLACK, color);
+		setCursorPos(menu_left, menu_top + 2 * i);
+		printf("%02d. %s  ", i + 1, _MENU_NAME[i]);
+	}
+	setColor();
+	return;
+}
+
+void showHelp()
+{
+	showFrame();
+	setColor();
+	setCursorPos((WINDOWS_WIDTH - FRAME_WIDTH) / 2 + 4, (WINDOWS_HIGH - FRAME_HIGH) / 2 + 1);
+	printf("这个游戏唯一的任");
+	setCursorPos((WINDOWS_WIDTH - FRAME_WIDTH) / 2 + 4, (WINDOWS_HIGH - FRAME_HIGH) / 2 + 2);
+	printf("务就是保护你的脑");
+	setCursorPos((WINDOWS_WIDTH - FRAME_WIDTH) / 2 + 4, (WINDOWS_HIGH - FRAME_HIGH) / 2 + 3);
+	printf("子不被僵尸吃掉！");
+	setColor(BLACK, GREEN);
+	setCursorPos((WINDOWS_WIDTH - FRAME_WIDTH) / 2 + (FRAME_WIDTH - 11) / 2, (WINDOWS_HIGH - FRAME_HIGH) / 2 + FRAME_HIGH - 1);
+	printf("确定(Enter)");
+	setColor();
+}
+
+void showExit()
+{
+	showFrame();
+	setColor();
+	setCursorPos((WINDOWS_WIDTH - FRAME_WIDTH) / 2 + 4, (WINDOWS_HIGH - FRAME_HIGH) / 2 + 2);
+	printf("确定退出游戏吗？");
+	setColor(BLACK, GREEN);
+	setCursorPos((WINDOWS_WIDTH - FRAME_WIDTH) / 2 + (FRAME_WIDTH - 21) / 2, (WINDOWS_HIGH - FRAME_HIGH) / 2 + FRAME_HIGH - 1);
+	printf("确定(Enter)");
+	setColor();
+	printf(" ");
+	setColor(BLACK, GREEN);
+	printf("取消(Esc)");
+	setColor();
 }

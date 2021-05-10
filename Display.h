@@ -24,3 +24,7 @@ void fixShop();
 //爆炸效果
 void showBoom(int r, int c, int size, int color);
 void fixBoom(int r, int c, int size);
+//显示菜单
+void showMenu();
+void showHelp();
+void showExit();

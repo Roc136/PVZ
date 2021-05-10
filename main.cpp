@@ -20,11 +20,12 @@ PlantList plist;
 BulletList blist;
 ZombieList zlist;
 Shop shop;
+static int sunlight_count = SUNLIGHT_ADD_TIME * 2 / 3; // 第一次所需时间较少
 
 bool Game();
 void levelOperate();
-static int sunlight_count = SUNLIGHT_ADD_TIME * 2 / 3; // 第一次所需时间较少
 void sunlightAdd();
+void reinit();
 
 int main()
 {
@@ -40,13 +41,29 @@ int main()
 	//	//printf("a");
 	//}
 	initWindow();
-	while (Game());
-	while (1);
+	int play_game = 1;
+	while (play_game)
+	{
+		showMenu();
+		int ch = _getch();
+		switch (ch)
+		{
+		case UP: case DOWN: case LEFT: case RIGHT:
+			Menu::change_selector(ch);
+			break;
+		case ENTER:
+			play_game = Menu::choose();
+			break;
+		default:
+			break;
+		}
+	}
 	return 0;
 }
 
 bool Game()
 {
+	system("cls");
 	int regame = 0;
 	ULONGLONG last_time = GetTickCount64();
 	showMap();
@@ -61,6 +78,16 @@ bool Game()
 			int key = _getch();
 			if (key == 224)
 				key = _getch();
+			if (key == BACKSPACE)
+			{
+				showMessage("确认退出游戏？按ESC继续游戏，按ENTER确认退出!");
+				int exit_key = _getch();
+				while (exit_key != ESC && exit_key != ENTER) exit_key = _getch();
+				if (exit_key == ENTER)
+					break;
+				else
+					showMessage("继续游戏！");
+			}
 			shop.shopOperate(key);
 		}
 		plist.plantsOperate();
@@ -71,7 +98,34 @@ bool Game()
 		levelOperate();
 		sunlightAdd();
 	}
-	showMessage("Game Over! 僵尸吃掉了你的脑子！");
+	if (!alive)
+	{
+		showMessage("Game Over! 僵尸吃掉了你的脑子！按 Esc 返回主界面，按 Enter 重新游戏！");
+		int ch = _getch();
+		int flag = 1;
+		while (flag)
+		{
+			flag = 0;
+			switch (ch)
+			{
+			case ESC:
+				regame = 0;
+				break;
+			case ENTER:
+				regame = 1;
+				break;
+			default:
+				flag = 1;
+				ch = _getch();
+				break;
+			}
+		}
+	}
+	else
+	{
+		regame = 0;
+	}
+	reinit();
 	return regame;
 }
 
@@ -140,6 +194,25 @@ void sunlightAdd()
 	{
 		sunlight_count++;
 	}
+}
+
+void reinit()
+{
+	shop.reinit(1);
+	plist.reinit();
+	blist.reinit();
+	zlist.reinit();
+	alive = 1;
+#ifdef DEBUG
+	score = 2200;
+	level = 7;
+	sunlight = 5000;
+#else
+	score = 0;
+	level = 1;
+	sunlight = 50;
+#endif // DEBUG
+	system("cls");
 }
 
 /*

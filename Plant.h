@@ -40,6 +40,8 @@ private:
 	std::map<Pos, Plant*, Pos_less> pumpkin_list;
 public:
 	PlantList();
+	~PlantList();
+	void reinit();
 	// 添加植物，sure参数表示确定覆盖旧植物
 	bool addPlant(Plant* plant, bool sure = 0);
 	// 遍历每个植物做一次 hit 函数

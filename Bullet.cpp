@@ -36,7 +36,21 @@ BULLET Bullet::getID() const
 	return id;
 }
 
+void BulletList::reinit()
+{
+	for (auto i = bullet_list.begin(); i != bullet_list.end();)
+	{
+		delete (*i);
+		i = bullet_list.erase(i);
+	}
+}
+
 BulletList::BulletList() {}
+
+BulletList::~BulletList()
+{
+	reinit();
+}
 
 void BulletList::addBullet(Bullet* blt)
 {

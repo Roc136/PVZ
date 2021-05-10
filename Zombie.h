@@ -50,6 +50,8 @@ private:
 	int create_time;
 public:
 	ZombieList();
+	~ZombieList();
+	void reinit();
 	// 添加僵尸
 	void addZombie();
 	// 遍历每个僵尸做一次 move 函数

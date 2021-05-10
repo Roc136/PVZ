@@ -1,7 +1,7 @@
 #pragma once
 
 //宏
-#define DEBUG
+//#define DEBUG
 
 //植物种类
 #define PLANT_KIND_NUM 11
@@ -9,9 +9,9 @@ enum class PLANT {
 	SUNFLOWER, //向日葵
 	PEA_SHOOTER, //豌豆射手
 	DOUBLE_SHOOTER, //双发射手
-	NUT, //坚果墙
-	POTATO, //土豆雷
 	ICE_SHOOTER, //寒冰射手
+	POTATO, //土豆雷
+	NUT, //坚果墙
 	HIGH_NUT, //高坚果
 	SQUASH, //窝瓜
 	CHERRY, //樱桃炸弹
@@ -48,6 +48,8 @@ enum class BULLET {
 #define WINDOWS_HIGH (ROW * (ROW_HIGH + 1) + TOP_HIGH + BOTTOM_HIGH + 1) //窗口高度
 #define WINDOWS_WIDTH (COL * (COL_WIDTH + 1) + 2) //窗口宽度
 #define MESSAGE_LINE 3 //消息在第几行显示
+#define FRAME_WIDTH 24 //菜单提示框的宽度
+#define FRAME_HIGH 5 //菜单提示框的高度
 
 #define SLEEP_TIME 20 //每次循环等待时间，ms
 #define COLOR_TIME 15 //颜色闪烁时间
@@ -87,6 +89,7 @@ enum class BULLET {
 #define DOWN 80
 #define ENTER 13
 #define ESC 27
+#define BACKSPACE 8
 #define NUM0 48
 #define NUM1 (NUM0+1)
 #define NUM2 (NUM0+2)

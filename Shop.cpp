@@ -9,6 +9,16 @@ PlantSelector::PlantSelector()
 	pid = 0;
 }
 
+PlantSelector::~PlantSelector()
+{
+	reinit();
+}
+
+void PlantSelector::reinit()
+{
+	pid = 0;
+}
+
 void PlantSelector::move(int direction)
 {
 	switch (direction)
@@ -49,6 +59,17 @@ int PlantSelector::getPlant() const
 
 MapSelector::MapSelector() :pos(0, 0) {}
 
+MapSelector::~MapSelector()
+{
+	reinit();
+}
+
+void MapSelector::reinit()
+{
+	pos.row = 0;
+	pos.col = 0;
+}
+
 void MapSelector::move(int direction)
 {
 	fixShop();
@@ -87,7 +108,6 @@ int Shop::buyPlant(int sure)
 		Pos pos = ms.getPos();
 		success = 1;
 		sunlight -= need_sun;
-		wait_time[pid] = _WAIT[pid];
 		switch (pid)
 		{
 		case 0:
@@ -122,17 +142,7 @@ int Shop::buyPlant(int sure)
 		}
 		case 3:
 		{
-			Nut* p = new Nut(pos.row, pos.col);
-			if (!plist.addPlant(p, sure))
-			{
-				success = 0;
-				status = 2;
-			}
-			break;
-		}
-		case 4:
-		{
-			Potato* p = new Potato(pos.row, pos.col);
+			IceShooter* p = new IceShooter(pos.row, pos.col);
 			if (!plist.addPlant(p, sure))
 			{
 				success = 0;
@@ -142,7 +152,7 @@ int Shop::buyPlant(int sure)
 		}
 		case 5:
 		{
-			IceShooter* p = new IceShooter(pos.row, pos.col);
+			Nut* p = new Nut(pos.row, pos.col);
 			if (!plist.addPlant(p, sure))
 			{
 				success = 0;
@@ -153,6 +163,36 @@ int Shop::buyPlant(int sure)
 		case 6:
 		{
 			HighNut* p = new HighNut(pos.row, pos.col);
+			if (!plist.addPlant(p, sure))
+			{
+				success = 0;
+				status = 2;
+			}
+			break;
+		}
+		case 10:
+		{
+			Pumpkin* p = new Pumpkin(pos.row, pos.col);
+			if (!plist.addPlant(p, sure))
+			{
+				success = 0;
+				status = 2;
+			}
+			break;
+		}
+		case 9:
+		{
+			Garlic* p = new Garlic(pos.row, pos.col);
+			if (!plist.addPlant(p, sure))
+			{
+				success = 0;
+				status = 2;
+			}
+			break;
+		}
+		case 4:
+		{
+			Potato* p = new Potato(pos.row, pos.col);
 			if (!plist.addPlant(p, sure))
 			{
 				success = 0;
@@ -180,36 +220,33 @@ int Shop::buyPlant(int sure)
 			}
 			break;
 		}
-		case 9:
-		{
-			Garlic* p = new Garlic(pos.row, pos.col);
-			if (!plist.addPlant(p, sure))
-			{
-				success = 0;
-				status = 2;
-			}
-			break;
-		}
-		case 10:
-		{
-			Pumpkin* p = new Pumpkin(pos.row, pos.col);
-			if (!plist.addPlant(p, sure))
-			{
-				success = 0;
-				status = 2;
-			}
-			break;
-		}
 		default:
 			success = -2;	
 		}
+		if(success == 1)
+			wait_time[pid] = _WAIT[pid];
 	}
 	return success;
+}
+
+void Shop::reinit(int regame)
+{
+	status = 0;
+	delete[] wait_time;
+	ps.reinit();
+	ms.reinit();
+	if(regame)
+		wait_time = new int[PLANT_KIND_NUM]();
 }
 
 Shop::Shop() :status(0) 
 {
 	wait_time = new int[PLANT_KIND_NUM]();
+}
+
+Shop::~Shop()
+{
+	reinit(0);
 }
 
 void Shop::choosePlant()
@@ -318,15 +355,44 @@ void Shop::shopOperate(int key)
 		{
 		case ENTER:
 		{
-			buyPlant(1);
-			const char* name = _PLANT_NAME[ps.getPlant()];
-			char msg[64] = "成功种植";
-			int i = 0;
-			for (i = 0; name[i] != 0; i++)
-				msg[8 + i] = name[i];
-			msg[8 + i] = '!';
-			showMessage(msg);
-			unchoosePlant();
+			int success = buyPlant(1);
+			if (success == 0)
+			{
+				if (status == 2)
+				{
+					sunlight += _COST[ps.getPlant()];
+					showMessage("当前位置已有植物！");
+				}
+				else
+				{
+					status = 0;
+					showMessage("阳光不足！");
+					fixShop();
+				}
+			}
+			else if (success == 1)
+			{
+				const char* name = _PLANT_NAME[ps.getPlant()];
+				char msg[64] = "成功种植";
+				int i = 0;
+				for (i = 0; name[i] != 0; i++)
+					msg[8 + i] = name[i];
+				msg[8 + i] = '!';
+				showMessage(msg);
+				unchoosePlant();
+			}
+			else if (success == -1)
+			{
+				status = 0;
+				showMessage("植物还在冷却！");
+				fixShop();
+			}
+			else if (success == -2)
+			{
+				status = 0;
+				showMessage("没有这种植物！");
+				fixShop();
+			}
 			break;
 		}
 		case UP: case DOWN: case LEFT: case RIGHT:

@@ -31,6 +31,8 @@ private:
 	std::vector<Bullet*> bullet_list;
 public:
 	BulletList();
+	~BulletList();
+	void reinit();
 	// 添加子弹
 	void addBullet(Bullet* blt);
 	// 子弹移动

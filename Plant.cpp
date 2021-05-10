@@ -1,15 +1,15 @@
 #include "include.h"
 
-static int _HP[] = { 100, 120, 120, 1000, 30, 120, 2000, 100, 100000, 160, 1000 }; // 植物血量
-static int _ATK[] = { 25, 15, 15, 0, 1000, 20, 0, 1000, 1000, 0, 0 }; // 植物攻击力
-static int _AS[] = { 1500, 50, 50, 0, 0, 50, 0, 20, 20, 0, 0 }; // 植物攻击速度，用等待值显示，ms
-static int _PLANT_COLOR[] = { DARK_YELLOW, GREEN, GREEN, WHITE, WHITE, CYAN, WHITE, DARK_GREEN, RED, DARK_WHITE, YELLOW }; // 植物颜色
-const char* _PLANT_NAME[] = { "向 日 葵", "豌豆射手", "双发射手", "坚 果 墙", "土 豆 雷", "寒冰射手", "高 坚 果", " 窝  瓜 ", "樱桃炸弹", " 大  蒜 ", "南 瓜 头" }; // 植物名字
-int _COST[] = { 50, 100, 200, 50, 25, 175, 125, 50, 150, 50, 125 }; // 植物花费
+static int _HP[] = { 100, 120, 120, 120, 30, 1000, 2000, 100, 100000, 160, 1000 }; // 植物血量
+static int _ATK[] = { 25, 15, 15, 20, 1000, 0, 0, 1000, 1000, 0, 0 }; // 植物攻击力
+static int _AS[] = { 1500, 50, 50, 50, 0, 0, 0, 20, 20, 0, 0 }; // 植物攻击速度，用等待值显示，ms
+static int _PLANT_COLOR[] = { DARK_YELLOW, GREEN, GREEN, CYAN, WHITE, WHITE, WHITE, DARK_GREEN, RED, DARK_WHITE, YELLOW }; // 植物颜色
+const char* _PLANT_NAME[] = { "向 日 葵", "豌豆射手", "双发射手", "寒冰射手", "土 豆 雷", "坚 果 墙", "高 坚 果", " 窝  瓜 ", "樱桃炸弹", " 大  蒜 ", "南 瓜 头" }; // 植物名字
+int _COST[] = { 50, 100, 200, 175, 25, 50, 125, 50, 150, 50, 125 }; // 植物花费
 #ifdef DEBUG
-int _WAIT[] = { 25, 25, 25, 100, 100, 30, 150, 150, 250, 50, 150 }; // 商店冷却
+int _WAIT[] = { 25, 25, 25, 30, 100, 100, 150, 150, 250, 50, 150 }; // 商店冷却
 #else
-int _WAIT[] = { 250, 250, 250, 1000, 1000, 300, 1500, 1500, 2500, 500, 1500 }; // 商店冷却
+int _WAIT[] = { 250, 250, 250, 300, 1000, 1000, 1500, 1500, 2500, 500, 1500 }; // 商店冷却
 #endif
 
 Plant::Plant(PLANT pid, int r, int c) :
@@ -45,7 +45,26 @@ bool Plant::isValid() const
 	return valid;
 }
 
+void PlantList::reinit()
+{
+	for (auto i = plant_list.begin(); i != plant_list.end();i)
+	{
+		delete i->second;
+		plant_list.erase(i++);
+	}
+	for (auto i = pumpkin_list.begin(); i != pumpkin_list.end(); i)
+	{
+		delete i->second;
+		pumpkin_list.erase(i++);
+	}
+}
+
 PlantList::PlantList() {}
+
+PlantList::~PlantList()
+{
+	reinit();
+}
 
 bool PlantList::addPlant(Plant* plant, bool sure)
 {
@@ -181,7 +200,7 @@ void PeaShooter::hit()
 		auto zombies = zlist.getZombie(pos.row);
 		for (auto z : zombies)
 		{
-			if (z->getPos().col > x)
+			if (z->getPos().col >= x)
 			{
 				// 发出子弹
 				Bullet* blt = new Bullet(x, y, 1, ATK, COLOR, BULLET::NORMAL);
@@ -215,7 +234,7 @@ void DoubleShooter::hit()
 		auto zombies = zlist.getZombie(pos.row);
 		for (auto z : zombies)
 		{
-			if (z->getPos().col > x)
+			if (z->getPos().col >= x || hit_count == 1)
 			{
 				// 发出子弹
 				Bullet* blt = new Bullet(x, y, 1, ATK, COLOR, BULLET::NORMAL);
@@ -232,6 +251,7 @@ void DoubleShooter::hit()
 				}
 				color_count = 0;
 				COLOR = DARK_GREEN;
+				break;
 			}
 		}
 	}
@@ -296,7 +316,7 @@ void IceShooter::hit()
 		auto zombies = zlist.getZombie(pos.row);
 		for (auto z : zombies)
 		{
-			if (z->getPos().col > x)
+			if (z->getPos().col >= x)
 			{
 				// 发出子弹
 				Bullet* blt = new IceBullet(x, y, 1, ATK, COLOR, BULLET::ICE_BULLET, ice_time);
@@ -304,6 +324,7 @@ void IceShooter::hit()
 				status_count = 0;
 				color_count = 0;
 				COLOR = DARK_CYAN;
+				break;
 			}
 		}
 	}
@@ -331,7 +352,7 @@ void Squash::hit()
 		current_hp = 100000;
 		showBoom(pos.row, pos.col, 0, COLOR);
 	}
-	if (attack == 2)
+	if (attack >= 2)
 	{
 		auto zombies = zlist.getZombie(pos.row);
 		for (auto i = zombies.begin(); i != zombies.end(); i++)
@@ -382,8 +403,11 @@ void Squash::hit()
 				attack++;
 				break;
 			}
-			else if (attack)
+			else if (attack == 1)
+			{
 				attack++;
+				break;
+			}
 		}
 		//if (zombie != NULL)
 		//{

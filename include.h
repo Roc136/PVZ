@@ -17,6 +17,7 @@
 #include "Bullet.h" //子弹模块
 #include "Zombie.h" //僵尸模块
 #include "Shop.h" //商店模块
+#include "Menu.h" //主菜单
 
 
 //全局变量，在main.cpp中定义

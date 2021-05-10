@@ -117,8 +117,8 @@ void Zombie::move()
 					alive = 0;
 			}
 #ifdef DEBUG
-			setCursorPos(30, 30);
-			printf("%d, %d", pos.row, pos.col);
+			//setCursorPos(30, 30);
+			//printf("%d, %d", pos.row, pos.col);
 #endif
 		}
 		move_count = 0;
@@ -183,13 +183,26 @@ int Zombie::special(int move_flag, int eat_flag, Plant*& plant)
 	return 0;
 }
 
+void ZombieList::reinit()
+{
+	for (auto i = zombie_list.begin(); i != zombie_list.end();)
+	{
+		delete (*i);
+		i = zombie_list.erase(i);
+	}
+	create_count = 0;
+	create_time = FIRST_ZOMBIE_TIME;
+}
+
 ZombieList::ZombieList()
 {
 	create_count = 0;
 	create_time = FIRST_ZOMBIE_TIME;
-#ifdef DEBUG
-	//create_time = 20;
-#endif
+}
+
+ZombieList::~ZombieList()
+{
+	reinit();
 }
 
 void ZombieList::addZombie()
@@ -199,7 +212,10 @@ void ZombieList::addZombie()
 	int r = rand() % ROW;
 #ifdef DEBUG
 	//r = 0;
-	zid = 6;
+	static int zid_tmp = 0;
+	zid = zid_tmp;
+	zid_tmp++;
+	zid_tmp %= ZOMBIE_KIND_NUM;
 #endif
 	int y = r * (ROW_HIGH + 1) + TOP_HIGH;
 	if (zlist.getZombie(NEW_ZOMBIE_X, y) || zlist.getZombie(NEW_ZOMBIE_X - 1, y) || zlist.getZombie(NEW_ZOMBIE_X - 2, y) || zlist.getZombie(r).size() > level * 1.3)
@@ -282,7 +298,11 @@ void ZombieList::zombieOperate()
 	{
 		create_count = 0;
 		if (create_time == FIRST_ZOMBIE_TIME)
+#ifdef DEBUG
+			create_time = 100;
+#else
 			create_time = 800;
+#endif
 		else if (create_time > 100)
 			create_time = create_time - rand() % (3 * level);
 		addZombie();
@@ -492,8 +512,8 @@ int Clown::special(int move_flag, int eat_flag, Plant*& plant)
 		}
 		boom_time--;
 #ifdef DEBUG
-		setCursorPos(40, 30);
-		printf("%05d", boom_time);
+		//setCursorPos(40, 30);
+		//printf("%05d", boom_time);
 #endif
 		return 1;
 	}
@@ -519,13 +539,13 @@ int Clown::special(int move_flag, int eat_flag, Plant*& plant)
 		boom_time--;
 	}
 #ifdef DEBUG
-	setCursorPos(40, 30);
-	printf("%05d", boom_time);
+	//setCursorPos(40, 30);
+	//printf("%05d", boom_time);
 #endif
 	return 0;
 }
 
-Throw::Throw(int x, int y) :Zombie(ZOMBIE::THROW, x, y), basketball(20), basketball_atk(15), basketball_as(2), throw_count(0){}
+Throw::Throw(int x, int y) :Zombie(ZOMBIE::THROW, x, y), basketball(20), basketball_atk(15), basketball_as(2), throw_count(0) {}
 
 int Throw::special(int move_flag, int eat_flag, Plant*& plant)
 {
@@ -565,8 +585,8 @@ int Throw::special(int move_flag, int eat_flag, Plant*& plant)
 					Basketball* blt = new Basketball(pos.col + COL_WIDTH - 2, pos.row + 1, 1, basketball_atk, DARK_YELLOW, BULLET::BASKETBALL, c - 1);
 					blist.addBullet(blt);
 #ifdef DEBUG
-					setCursorPos(59, 30);
-					printf("%02d", basketball);
+					//setCursorPos(59, 30);
+					//printf("%02d", basketball);
 #endif
 				}
 				else
