@@ -216,6 +216,7 @@ void ZombieList::addZombie()
 	zid = zid_tmp;
 	zid_tmp++;
 	zid_tmp %= ZOMBIE_KIND_NUM;
+	//zid = 5;
 #endif
 	int y = r * (ROW_HIGH + 1) + TOP_HIGH;
 	if (zlist.getZombie(NEW_ZOMBIE_X, y) || zlist.getZombie(NEW_ZOMBIE_X - 1, y) || zlist.getZombie(NEW_ZOMBIE_X - 2, y) || zlist.getZombie(r).size() > level * 1.3)

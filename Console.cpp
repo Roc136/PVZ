@@ -2,6 +2,8 @@
 #include <windows.h>
 #include <time.h>
 
+static HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+
 void initWindow()
 {
 	SetConsoleTitleA("Plant VS. Zombies! | version = 2.1  | @Roc"); //修改窗口名字
@@ -27,13 +29,15 @@ void initWindow()
 	//system("mode con cols=90 lines=39");
 	//隐藏光标
 	setCursorHide(0);
+	//恢复默认颜色
 	setColor();
+	//重置随机数种子
 	srand((unsigned)time(0));
 }
 
 void setCursorHide(bool visible)
 {
-	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	//HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_CURSOR_INFO CursorInfo;
 	GetConsoleCursorInfo(handle, &CursorInfo);//获取控制台光标信息
 	CursorInfo.bVisible = visible; //隐藏或显示控制台光标
@@ -43,7 +47,7 @@ void setCursorHide(bool visible)
 
 void setCursorPos(int x, int y)
 {
-	HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	//HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD coord;
 	coord.X = x;
 	coord.Y = y;
@@ -52,8 +56,9 @@ void setCursorPos(int x, int y)
 
 void setColor(int font_color, int background_color)
 {
+	//HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	if (font_color == WHITE &&
 		background_color == YELLOW || background_color == WHITE || background_color == BLUE || background_color == CYAN || background_color == DARK_WHITE || background_color == font_color)
 		font_color = BLACK;
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), background_color << 4 | font_color);
+	SetConsoleTextAttribute(handle, background_color << 4 | font_color);
 }
