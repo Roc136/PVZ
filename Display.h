@@ -28,3 +28,5 @@ void fixBoom(int r, int c, int size);
 void showMenu();
 void showHelp();
 void showExit();
+void showFrame();
+void fixFrame();

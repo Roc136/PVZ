@@ -1,7 +1,7 @@
 #pragma once
 
 //∫Í
-//#define DEBUG
+#define DEBUG
 
 //÷≤ŒÔ÷÷¿‡
 #define PLANT_KIND_NUM 11

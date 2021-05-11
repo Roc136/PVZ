@@ -578,7 +578,6 @@ void showImg()
 
 void showMenu()
 {
-	fixFrame();
 	showImg();
 	int menu_left = WINDOWS_WIDTH / 2 + 30;
 	int menu_top = WINDOWS_HIGH / 2 - Menu::lines - 1;

@@ -4,7 +4,7 @@
 
 void initWindow()
 {
-	SetConsoleTitleA("Plant VS. Zombies! | version = 2.0  | @Roc"); //修改窗口名字
+	SetConsoleTitleA("Plant VS. Zombies! | version = 2.1  | @Roc"); //修改窗口名字
 	//设置窗口大小不可变
 	HWND hWnd = GetConsoleWindow();
 	RECT rc;

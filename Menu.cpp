@@ -37,12 +37,14 @@ int Menu::choose()
 	case 1:
 		showHelp();
 		while (_getch() != ENTER);
+		fixFrame();
 		return 1;
 	case 2:
 	{
 		showExit();
 		int key = _getch();
 		while (key != ENTER && key != ESC) key = _getch();
+		fixFrame();
 		if (key == ENTER)
 			return 0;
 		else
