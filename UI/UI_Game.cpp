@@ -62,6 +62,16 @@ void UI_Game::Start()
 	qDebug() << "Game Started!";
 	shop->show();
 	UI_Game::timer->start();
+#ifdef DEBUG
+	UI_Game::sunlight = 5432; // 阳光数，初始50
+#else
+	UI_Game::sunlight = 50; // 阳光数，初始50
+#endif // DEBUG
+	UI_Game::alive = 1;
+	UI_Game::score = 0;
+	UI_Game::level = 1;
+	UI_Game::sunlight_count = SUNLIGHT_ADD_TIME * 2 / 3;
+	UI_Game::pause = 0;
 }
 
 void UI_Game::Quit()
