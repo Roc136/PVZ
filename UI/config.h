@@ -41,9 +41,10 @@ enum class BULLET {
 // 配置
 #define COL 9 //行
 #define ROW 5 //列
-#define ROW_HIGH 71 //行高
-#define COL_WIDTH 71 //列宽
-#define TOP_HIGH 4 //顶部栏高度
+#define ROW_HIGH 99 //行高
+#define COL_WIDTH 79 //列宽
+#define TOP_HIGH 59 //顶部高度
+#define LEFT_WIDTH 41 // 左侧宽度
 #define BOTTOM_HIGH (2 + 2 * ((PLANT_KIND_NUM + 3) / 4)) //底部栏高度
 #define WINDOWS_HIGH (ROW * (ROW_HIGH + 1) + TOP_HIGH + BOTTOM_HIGH + 1) //窗口高度
 #define WINDOWS_WIDTH (COL * (COL_WIDTH + 1) + 2) //窗口宽度
@@ -51,9 +52,9 @@ enum class BULLET {
 #define FRAME_WIDTH 24 //菜单提示框的宽度
 #define FRAME_HIGH 5 //菜单提示框的高度
 
-#define SLEEP_TIME 20 //每次循环等待时间，ms
+#define SLEEP_TIME 15 //每次循环等待时间，ms
 #define COLOR_TIME 15 //颜色闪烁时间
-#define NEW_ZOMBIE_X (WINDOWS_WIDTH - COL_WIDTH) //新僵尸的横坐标
+#define NEW_ZOMBIE_X (WINDOWS_WIDTH + 5) //新僵尸的横坐标
 #define SUNLIGHT_ADD_NUM 25 //自然阳光每次增加数量
 
 #ifdef DEBUG

@@ -8,6 +8,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     a.setApplicationDisplayName("Plant VS. Zombies! | version = 3.0  | @Roc");
     UI_Menu* menu = new UI_Menu;
+    UI_Game game(menu);
+    menu->setGame(&game);
     return a.exec();
 }
 

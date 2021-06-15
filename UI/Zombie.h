@@ -2,8 +2,9 @@
 #include "config.h"
 #include <vector>
 #include "Plant.h"
+#include "qmultimedia.h"
 
-class Zombie
+class Zombie: public QWidget
 {
 protected:
 	ZOMBIE ZOMBIE_ID; //僵尸id，表示种类，枚举类型
@@ -19,13 +20,17 @@ protected:
 	int eat_count; //攻击状态计数，达到等待时间后攻击
 	int move_count; //移动状态技术
 	int color_count; //颜色变化计数
+	int status; // 状态，0-移动，1-攻击，2-其他（跳，投掷）
 	int slowed;
 	int old_ms;
 	int old_as;
-	int garlic;
+	int garlic; 
+	QMovie* movie;
+	QLabel* processLabel;
 public:
 	//构造函数，提供僵尸类型和坐标，坐标是所在单元的左上角
 	Zombie(ZOMBIE zid, int x, int y);
+	~Zombie();
 	//被打，返回存活状态
 	virtual bool beHit(int atk);
 	//被减速
@@ -39,8 +44,12 @@ public:
 	//需特殊处理的内容，虚函数
 	virtual int special(int move_flag, int eat_flag, Plant*& plant);
 	//显示僵尸，友元函数，在UI模块定义
-	friend void showZombie(const Zombie& zombie);
-	friend void fixZombie(const Zombie& zombie);
+	//friend void showZombie(const Zombie& zombie);
+	//friend void fixZombie(const Zombie& zombie);
+	void fix();
+	void show();
+	void hide();
+	void changeMovie(const char* path);
 };
 
 class ZombieList
@@ -49,6 +58,7 @@ private:
 	std::vector<Zombie*> zombie_list;
 	int create_count;
 	int create_time;
+	int flag = 1;
 public:
 	ZombieList();
 	~ZombieList();

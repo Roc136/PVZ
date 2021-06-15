@@ -1,10 +1,13 @@
 #pragma once
 #include "config.h"
 #include <vector>
+#include <qwidget.h>
+#include <qlabel.h>
+#include <qmultimedia.h>
 
 class Plant;
 
-class Bullet
+class Bullet: public QWidget
 {
 protected:
 	int pos_x;
@@ -15,14 +18,19 @@ protected:
 	int color;
 	int status_count;
 	BULLET id;
+	QMovie* movie;
+	QLabel* processLabel;
 public:
 	Bullet(int x, int y, int speed, int atk, int color, BULLET id);
 	// 移动，返回子弹是否消亡（撞击敌人或移动到屏幕外消亡）
 	virtual bool move();
 	BULLET getID() const;
 	// 显示子弹，友元函数，在UI模块定义
-	friend void showBullet(const Bullet& blt);
-	friend void fixBullet(const Bullet& blt);
+	//friend void showBullet(const Bullet& blt);
+	//friend void fixBullet(const Bullet& blt);
+	void fix();
+	void show();
+	void hide();
 };
 
 class BulletList

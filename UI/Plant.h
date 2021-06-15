@@ -1,8 +1,11 @@
 #pragma once
 #include "config.h"
 #include <map>
+#include <qwidget.h>
+#include <qmovie.h>
+#include <qlabel.h>
 
-class Plant
+class Plant: public QWidget
 {
 protected:
 	PLANT PLANT_ID; //植物id，表示种类，枚举类型
@@ -15,9 +18,13 @@ protected:
 	Pos pos; //植物位置
 	int status_count; //攻击状态计数，达到等待时间后攻击
 	int color_count; //颜色变化计数
+	int status;
+	QMovie* movie;
+	QLabel* processLabel;
 public:
 	//构造函数，提供植物类型和坐标
 	Plant(PLANT pid, int x, int y);
+	~Plant();
 	//被吃，返回存活状态
 	bool beEaten(int atk);
 	//获取植物坐标
@@ -29,8 +36,9 @@ public:
 	//攻击，纯虚函数，在具体的植物类中定义
 	virtual void hit() = 0;
 	//显示植物，友元函数，在UI模块定义
-	friend void showPlant(const Plant& plant);
-	friend void fixPlant(const Plant& plant);
+	//friend void showPlant(const Plant& plant);
+	//friend void fixPlant(const Plant& plant);
+	void changeMovie(const char* path, int width, int high);
 };
 
 class PlantList
@@ -47,6 +55,8 @@ public:
 	// 遍历每个植物做一次 hit 函数
 	void plantsOperate();
 	Plant* getPlant(int r, int c);
+	Plant* getNormalPlant(int r, int c);
+	Plant* getPumkin(int r, int c);
 };
 
 class Sunflower : public Plant
@@ -106,6 +116,7 @@ class HighNut : public Nut
 {
 public:
 	HighNut(int r, int c);
+	void hit();
 };
 
 class Squash : public Plant
@@ -133,7 +144,10 @@ public:
 
 class Pumpkin : public Plant
 {
+	QMovie* back_movie;
+	QLabel* backLabel;
 public:
 	Pumpkin(int r, int c);
+	~Pumpkin();
 	void hit();
 };

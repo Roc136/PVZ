@@ -113,7 +113,7 @@
     <ClInclude Include="include.h" />
     <QtMoc Include="MyBaseButton.h" />
     <ClInclude Include="Plant.h" />
-    <ClInclude Include="Shop.h" />
+    <QtMoc Include="Shop.h" />
     <ClInclude Include="UI.h" />
   </ItemGroup>
   <ItemGroup>

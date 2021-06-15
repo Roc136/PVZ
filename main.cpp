@@ -41,7 +41,7 @@ int main()
 	//	//printf("a");
 	//}
 	initWindow();
-	int play_game = 1;
+	int play_game = 1;	
 	while (play_game)
 	{
 		showMenu();

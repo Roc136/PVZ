@@ -78,9 +78,6 @@
     <ClInclude Include="Plant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shop.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Zombie.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -93,6 +90,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="UI_Game.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Shop.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

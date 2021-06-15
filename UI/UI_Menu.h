@@ -6,12 +6,20 @@
 #include "UI_Game.h"
 
 class AskWid;
+class overWid;
+class ensureWid;
 class UI_Menu :public QWidget
 {
 	Q_OBJECT
 
 public:
 	UI_Menu(QWidget* parent = 0);
+	void show_numbers(int number);
+	void setGame(UI_Game* game) { 
+		this->game = game;
+		connect(game, SIGNAL(gameover()), this, SLOT(gameoverWid()));
+	}
+	void showMessage(const char* path);
 private:
 	Background* bg;
 	MyBaseButton* start;
@@ -20,7 +28,15 @@ private:
 	MyBaseButton* help_ret;
 	MyBaseButton* game_ret;
 	QMediaPlayer* music;
-	AskWid* game_back_ask_wid;
+	ensureWid* game_back_ask_wid;
+	overWid* gameover_wid;
+	QLabel* score;
+	QLabel* numbers[4];
+	QLabel* level;
+	QLabel* level_number;
+	UI_Game* game;
+	QLabel* message;
+	QTimer* timer;
 
 public slots:
 	void start_game();
@@ -29,11 +45,14 @@ public slots:
 	void game_back_ask();
 	void game_back();
 	void game_noback();
+	void gameoverWid();
+	void hideMessage();
 };
 
 class AskWid: public QWidget
 {
 	Q_OBJECT
+protected:
 	UI_Menu* menu;
 	QLabel* lable_topleft;
 	QLabel* lable_topmiddle;
@@ -49,6 +68,21 @@ class AskWid: public QWidget
 	QLabel* info;
 public:
 	AskWid(QWidget* parent, UI_Menu* menu);
+	virtual void setConfig()=0;
 	void show();
 	void hide();
+};
+
+class ensureWid : public AskWid
+{
+public:
+	ensureWid(QWidget* parent, UI_Menu* menu);
+	void setConfig() override;
+};
+
+class overWid : public AskWid
+{
+public:
+	overWid(QWidget* parent, UI_Menu* menu);
+	void setConfig() override;
 };

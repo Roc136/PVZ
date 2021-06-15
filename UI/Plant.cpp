@@ -7,7 +7,11 @@ static int _HP[] = { 100, 120, 120, 120, 30, 1000, 2000, 100, 100000, 160, 1000 
 static int _ATK[] = { 25, 15, 15, 20, 1000, 0, 0, 1000, 1000, 0, 0 }; // 植物攻击力
 static int _AS[] = { 1500, 50, 50, 50, 0, 0, 0, 20, 20, 0, 0 }; // 植物攻击速度，用等待值显示，ms
 static int _PLANT_COLOR[] = { DARK_YELLOW, GREEN, GREEN, CYAN, WHITE, WHITE, WHITE, DARK_GREEN, RED, DARK_WHITE, YELLOW }; // 植物颜色
-const char* _PLANT_NAME[] = { "向 日 葵", "豌豆射手", "双发射手", "寒冰射手", "土 豆 雷", "坚 果 墙", "高 坚 果", " 窝  瓜 ", "樱桃炸弹", " 大  蒜 ", "南 瓜 头" }; // 植物名字
+const char* _PLANT_NAME[] = { "SunFlower", "Peashooter", "Repeater", "SnowPea", "PotatoMine", "WallNut", "TallNut", "Squash", "CherryBomb", "Gralic", "PumpkinHead" };
+//const char* _PLANT_NAME[] = { "向 日 葵", "豌豆射手", "双发射手", "寒冰射手", "土 豆 雷", "坚 果 墙", "高 坚 果", " 窝  瓜 ", "樱桃炸弹", " 大  蒜 ", "南 瓜 头" }; // 植物名字
+const char* _PLANT_PATH[] = { "SunFlower", "Peashooter", "Repeater", "SnowPea", "PotatoMine", "WallNut", "TallNut", "Squash", "CherryBomb", "Gralic", "PumpkinHead"};
+static int _WIDTH[] = { 73, 71, 73, 71, 75, 65, 83, 73, 112, 60, 97 };
+static int _HIGH[] = { 74, 71, 71, 71, 55, 73, 119, 85, 81, 59, 67 };
 int _COST[] = { 50, 100, 200, 175, 25, 50, 125, 50, 150, 50, 125 }; // 植物花费
 #ifdef DEBUG
 int _WAIT[] = { 25, 25, 25, 30, 100, 100, 150, 150, 250, 50, 150 }; // 商店冷却
@@ -16,7 +20,7 @@ int _WAIT[] = { 250, 250, 250, 300, 1000, 1000, 1500, 1500, 2500, 500, 1500 }; /
 #endif
 
 Plant::Plant(PLANT pid, int r, int c) :
-	PLANT_ID(pid), pos(r, c), status_count(0), valid(1)
+	PLANT_ID(pid), pos(r, c), status_count(0), valid(1), QWidget(UI_Game::bg), status(0)
 {
 	FULL_HP = _HP[(int)pid];
 	ATK = _ATK[(int)pid];
@@ -24,6 +28,30 @@ Plant::Plant(PLANT pid, int r, int c) :
 	COLOR = _PLANT_COLOR[(int)pid];
 	current_hp = FULL_HP;
 	color_count = 0;
+
+	int x = LEFT_WIDTH + (c + 1) * (COL_WIDTH + 1) - _WIDTH[(int)pid];
+	int y = TOP_HIGH + (r + 1) * (ROW_HIGH + 1) - _HIGH[(int)pid];
+	setGeometry(x, y, _WIDTH[(int)pid], _HIGH[(int)pid]);
+	show();
+	setStyleSheet("background-image:url();");
+	char movie_path[100] = "";
+	sprintf(movie_path, "Resource/images/Plants/%s/%s.gif", _PLANT_PATH[(int)pid], _PLANT_PATH[(int)pid]);
+	movie = new QMovie(movie_path);
+	processLabel = new QLabel(this);
+	processLabel->setMovie(movie);
+	processLabel->setGeometry(0, 0, _WIDTH[(int)pid], _HIGH[(int)pid]);
+	processLabel->setAttribute(Qt::WA_TranslucentBackground, true);
+	processLabel->show();
+	movie->start();
+
+	setAttribute(Qt::WA_TransparentForMouseEvents, true);
+	setWindowFlags(Qt::FramelessWindowHint);
+	setAttribute(Qt::WA_TranslucentBackground);
+}
+
+Plant::~Plant()
+{
+	qDebug() << "Plant" << _PLANT_NAME[(int)PLANT_ID] << "Dead";
 }
 
 bool Plant::beEaten(int atk)
@@ -48,14 +76,26 @@ bool Plant::isValid() const
 	return valid;
 }
 
+void Plant::changeMovie(const char* path, int width, int high)
+{
+	hide();
+	delete movie;
+	movie = new QMovie(path);
+	movie->setScaledSize(QSize(width, high));
+	processLabel->setMovie(movie);
+	movie->start();
+	show();
+}
+
 void PlantList::reinit()
 {
-	for (auto i = plant_list.begin(); i != plant_list.end();i)
+	qDebug() << "PlantList reinited!";
+	for (auto i = plant_list.begin(); i != plant_list.end();)
 	{
 		delete i->second;
 		plant_list.erase(i++);
 	}
-	for (auto i = pumpkin_list.begin(); i != pumpkin_list.end(); i)
+	for (auto i = pumpkin_list.begin(); i != pumpkin_list.end();)
 	{
 		delete i->second;
 		pumpkin_list.erase(i++);
@@ -153,13 +193,27 @@ void PlantList::plantsOperate()
 
 Plant* PlantList::getPlant(int r, int c)
 {
+	Plant* p = getPumkin(r, c);
+	if (p)
+		return p;
+	return getNormalPlant(r, c);
+}
+
+Plant* PlantList::getNormalPlant(int r, int c)
+{
+	Pos p(r, c);
+	auto j = plant_list.find(p);
+	if (j != plant_list.end())
+		return j->second;
+	return NULL;
+}
+
+Plant* PlantList::getPumkin(int r, int c)
+{
 	Pos p(r, c);
 	auto i = pumpkin_list.find(p);
 	if (i != pumpkin_list.end())
 		return i->second;
-	auto j = plant_list.find(p);
-	if (j != plant_list.end())
-		return j->second;
 	return NULL;
 }
 
@@ -244,12 +298,12 @@ void DoubleShooter::hit()
 				UI_Game::blist.addBullet(blt);
 				if (hit_count == 1)
 				{
-					status_count = 4;
+					status_count = 8;
 					hit_count = 0;
 				}
 				else
 				{
-					status_count = AS - 4;
+					status_count = AS - 8;
 					hit_count++;
 				}
 				color_count = 0;
@@ -271,7 +325,19 @@ void DoubleShooter::hit()
 
 Nut::Nut(int r, int c, PLANT id) :Plant(id, r, c) {}
 
-void Nut::hit() {}
+void Nut::hit() 
+{
+	if (current_hp < FULL_HP * 2 / 3 && status == 0)
+	{
+		status = 1;
+		changeMovie("Resource/images/Plants/WallNut/Wallnut_cracked1.gif", _WIDTH[(int)PLANT_ID], _HIGH[(int)PLANT_ID]);
+	}
+	else if (current_hp < FULL_HP / 3 && status == 1)
+	{
+		status = 2;
+		changeMovie("Resource/images/Plants/WallNut/Wallnut_cracked2.gif", _WIDTH[(int)PLANT_ID], _HIGH[(int)PLANT_ID]);
+	}
+}
 
 Potato::Potato(int r, int c) : Plant(PLANT::POTATO, r, c), is_ready(0), ready_count(0) {}
 
@@ -284,23 +350,39 @@ void Potato::hit()
 		Zombie* z = UI_Game::zlist.getZombie(x, y);
 		if (z != NULL)
 		{
-			if (is_ready == 1)
+			if (is_ready < 50)
 			{
 				//showBoom(pos.row, pos.col, 0, RED);
+				if (is_ready == 1)
+				{
+					QMediaPlayer* music = new QMediaPlayer(UI_Game::bg);
+					music->setMedia(QUrl::fromLocalFile("Resource/sounds/boom.mp3"));
+					music->setVolume(40);
+					music->play();
+					changeMovie("Resource/images/Plants/PotatoMine/PotatoMine_mashed.gif", _WIDTH[(int)PLANT_ID], _HIGH[(int)PLANT_ID]);
+					z->beHit(ATK);
+				}
 				is_ready++;
 			}
 			else
 			{
-				z->beHit(ATK);
 				//fixBoom(pos.row, pos.col, 0);
 				valid = 0;
 			}
+		}
+		else if (is_ready >= 2)
+		{
+			if (is_ready > 50)
+				valid = 0;
+			is_ready++;
 		}
 	}
 	else if (ready_count == 1000)
 	{
 		is_ready++;
+		current_hp = 20000;
 		COLOR = RED;
+		changeMovie("Resource/images/Plants/PotatoMine/PotatoMineReady.gif", _WIDTH[(int)PLANT_ID], _HIGH[(int)PLANT_ID]);
 	}
 	else
 	{
@@ -344,6 +426,20 @@ void IceShooter::hit()
 
 HighNut::HighNut(int r, int c) :Nut(r, c, PLANT::HIGH_NUT) {}
 
+void HighNut::hit()
+{
+	if (current_hp < FULL_HP * 2 / 3 && status == 0)
+	{
+		status = 1;
+		changeMovie("Resource/images/Plants/TallNut/TallnutCracked1.gif", _WIDTH[(int)PLANT_ID], _HIGH[(int)PLANT_ID]);
+	}
+	else if (current_hp < FULL_HP / 3 && status == 1)
+	{
+		status = 2;
+		changeMovie("Resource/images/Plants/TallNut/TallnutCracked2.gif", _WIDTH[(int)PLANT_ID], _HIGH[(int)PLANT_ID]);
+	}
+}
+
 Squash::Squash(int r, int c) : Plant(PLANT::SQUASH, r, c), attack(0) {}
 
 void Squash::hit()
@@ -353,9 +449,15 @@ void Squash::hit()
 	if (attack == 1)
 	{
 		current_hp = 100000;
+		int x = LEFT_WIDTH + (pos.col + 1) * (COL_WIDTH + 1) - 100;
+		int y = TOP_HIGH + (pos.row + 1) * (ROW_HIGH + 1) - 226;
+		setGeometry(x, y, 100, 226);
+		processLabel->setGeometry(0, 0, 100, 226);
+		processLabel->repaint();
+		changeMovie("Resource/images/Plants/Squash/SquashAttack.gif", 100, 226);
 		//showBoom(pos.row, pos.col, 0, COLOR);
 	}
-	if (attack >= 2)
+	if (attack >= 5)
 	{
 		auto zombies = UI_Game::zlist.getZombie(pos.row);
 		for (auto i = zombies.begin(); i != zombies.end(); i++)
@@ -442,9 +544,22 @@ void Cherry::hit()
 	//showBoom(pos.row, pos.col, 1, COLOR);
 	int x = (pos.col + 1) * (COL_WIDTH + 1) - 1;
 	int y = pos.row * (ROW_HIGH + 1) + TOP_HIGH;
-
-	if (attack == 3)
+	if (attack == 2)
 	{
+		if (status == 0)
+		{
+			status = 1;
+			int x = LEFT_WIDTH + (pos.col + 1) * (COL_WIDTH + 1) - 178;
+			int y = TOP_HIGH + (pos.row + 1) * (ROW_HIGH + 1) - 120;
+			setGeometry(x, y, 213, 160);
+			processLabel->setGeometry(0, 0, 213, 160);
+			processLabel->repaint();
+			changeMovie("Resource/images/Plants/CherryBomb/Boom.gif", 213, 160);
+			QMediaPlayer* music = new QMediaPlayer(UI_Game::bg);
+			music->setMedia(QUrl::fromLocalFile("Resource/sounds/boom.mp3"));
+			music->setVolume(40);
+			music->play();
+		}
 		auto zombies = UI_Game::zlist.getZombie(pos.row);
 		for (auto i = zombies.begin(); i != zombies.end(); i++)
 		{
@@ -464,9 +579,12 @@ void Cherry::hit()
 				(*i)->beHit(ATK);
 		}
 		//fixBoom(pos.row, pos.col, 1);
+	}
+	else if (attack == 4)
+	{
 		this->valid = 0;
 	}
-	else if (status_count >= AS)
+	if (status_count >= AS)
 	{
 		this->COLOR = DARK_RED;
 		color_count = 0;
@@ -485,8 +603,55 @@ void Cherry::hit()
 
 Garlic::Garlic(int r, int c) : Plant(PLANT::GARLIC, r, c) {}
 
-void Garlic::hit() {}
+void Garlic::hit()
+{
+	if (current_hp < FULL_HP * 2 / 3 && status == 0)
+	{
+		status = 1;
+		changeMovie("Resource/images/Plants/Garlic/Garlic_body2.gif", _WIDTH[(int)PLANT_ID], _HIGH[(int)PLANT_ID]);
+	}
+	else if (current_hp < FULL_HP / 3 && status == 1)
+	{
+		status = 2;
+		changeMovie("Resource/images/Plants/Garlic/Garlic_body3.gif", _WIDTH[(int)PLANT_ID], _HIGH[(int)PLANT_ID]);
+	}
+}
 
-Pumpkin::Pumpkin(int r, int c) : Plant(PLANT::PUMPKIN, r, c) {}
+Pumpkin::Pumpkin(int r, int c) : Plant(PLANT::PUMPKIN, r, c)
+{
+	back_movie = new QMovie("Resource/images/Plants/PumpkinHead/Pumpkin_back.gif");
+	backLabel = new QLabel(UI_Game::bg);
+	backLabel->setMovie(back_movie);
+	int x = LEFT_WIDTH + (c + 1) * (COL_WIDTH + 1) - _WIDTH[(int)PLANT_ID];
+	int y = TOP_HIGH + (r + 1) * (ROW_HIGH + 1) - _HIGH[(int)PLANT_ID];
+	backLabel->setGeometry(x, y, _WIDTH[(int)PLANT_ID], _HIGH[(int)PLANT_ID]);
+	backLabel->setAttribute(Qt::WA_TranslucentBackground, true);
+	backLabel->show();
+	back_movie->start();
+	backLabel->stackUnder(this);
+}
 
-void Pumpkin::hit() {}
+Pumpkin::~Pumpkin()
+{
+	delete backLabel;
+}
+
+void Pumpkin::hit()
+{
+	if (current_hp < FULL_HP * 2 / 3 && status == 0)
+	{
+		status = 1;
+		changeMovie("Resource/images/Plants/PumpkinHead/Pumpkin_damage1.gif", _WIDTH[(int)PLANT_ID], _HIGH[(int)PLANT_ID]);
+	}
+	else if (current_hp < FULL_HP / 3 && status == 1)
+	{
+		status = 2;
+		changeMovie("Resource/images/Plants/PumpkinHead/Pumpkin_damage2.gif", _WIDTH[(int)PLANT_ID], _HIGH[(int)PLANT_ID]);
+	}
+	Plant* p = UI_Game::plist.getNormalPlant(pos.row, pos.col);
+	if (p != NULL)
+	{
+		p->raise();
+		raise();
+	}
+}
